@@ -1,4 +1,42 @@
-﻿namespace Minimal.Infraestrutura.Db;
+﻿using Microsoft.EntityFrameworkCore;
+using Minimal.Dominio.Entidades;
 
-public class DbContexto {
+namespace Minimal.Infraestrutura.Db;
+
+public class DbContexto :DbContext {
+    private readonly IConfiguration _configurationAppSettings;
+    public DbContexto( IConfiguration configurationAppSettings ) {
+        _configurationAppSettings = configurationAppSettings;
+    }
+
+
+    public DbSet<Administrador> Administradores { get; set; } = default!;
+
+    protected override void OnModelCreating( ModelBuilder modelBuilder ) {
+        modelBuilder.Entity<Administrador>().HasData(
+            new Administrador {
+                Id = 1,
+                Name = "Administrador",
+                Email = "administrador@teste.com",
+                Senha = "123456",
+                Perfil = "Adm"
+            }
+            );
+    }
+
+    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder ) {
+
+        if(!optionsBuilder.IsConfigured) {
+
+            var connectionString = _configurationAppSettings.GetConnectionString("ConexaoPadrao")?.ToString();
+
+            if(!string.IsNullOrEmpty(connectionString)) {
+                optionsBuilder.UseSqlServer(connectionString);
+            }
+        }
+
+    }
+
+
+
 }
