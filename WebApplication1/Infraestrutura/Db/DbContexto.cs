@@ -9,6 +9,7 @@ public class DbContexto :DbContext {
         _configurationAppSettings = configurationAppSettings;
     }
 
+   
 
     public DbSet<Administrador> Administradores { get; set; } = default!;
 
