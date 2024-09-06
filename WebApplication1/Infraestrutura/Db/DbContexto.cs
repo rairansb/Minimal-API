@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Minimal.Dominio.Entidades;
 
 namespace Minimal.Infraestrutura.Db;
 
 public class DbContexto :DbContext {
-    private readonly IConfiguration _configurationAppSettings;
-    public DbContexto( IConfiguration configurationAppSettings ) {
-        _configurationAppSettings = configurationAppSettings;
-    }
-
-   
+  
+    public DbContexto( DbContextOptions options ) : base(options) 
+    {
+    } 
 
     public DbSet<Administrador> Administradores { get; set; } = default!;
 
@@ -27,20 +26,6 @@ public class DbContexto :DbContext {
             }
             );
     }
-
-    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder ) {
-
-        if(!optionsBuilder.IsConfigured) {
-
-            var connectionString = _configurationAppSettings.GetConnectionString("ConexaoPadrao")?.ToString();
-
-            if(!string.IsNullOrEmpty(connectionString)) {
-                optionsBuilder.UseSqlServer(connectionString);
-            }
-        }
-
-    }
-
 
 
 }
